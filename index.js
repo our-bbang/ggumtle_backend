@@ -10,6 +10,7 @@ const cors = require("cors")
 app.use(cors());
 app.use(express.json());
 
+
 app.get('/idcheck',function(req,res){
     var user_name = req.query,user_name;
     maria.query(`select * from person_info where user_name=${user_name}`, function(err, rows, fields){
