@@ -228,7 +228,7 @@ router.get('/get/report/list', async (req, res) => {
   
       const promises = rows.map(row => {
         mains.push(row.main);
-        const querys = `SELECT total, small_goal, main_id FROM big_goal where main_id=${row.id};`;
+        const querys = `SELECT date, total, small_goal, main_id FROM big_goal where main_id=${row.id};`;
         return queryAsync(querys);
       });
   
@@ -238,7 +238,7 @@ router.get('/get/report/list', async (req, res) => {
       for (const result of results) {
         console.log(result);
         var score = Math.round(((result[0].total + result[1].total + result[2].total + result[3].total)/16)*100);
-        jarray.push({main: mains[i], main_id: result[0].main_id, small1:result[0].small_goal, small2:result[1].small_goal, small3:result[2].small_goal, small4 :result[3].small_goal, total : score})
+        jarray.push({datetime : result[0].date, main: mains[i], main_id: result[0].main_id, small1:result[0].small_goal, small2:result[1].small_goal, small3:result[2].small_goal, small4 :result[3].small_goal, total : score})
         // jarray.push(result);
         i = i+1;
         console.log("-----------------------");
@@ -370,7 +370,37 @@ router.get("/gpt", async (req, res) => {
           
                 if (response) {
                   const user = JSON.parse(response) // json.parse로 파싱
-                  res.json(user);       
+                  //res.json(user);       
+
+                  var bucketarray = [user.MainKeyword,user.MainKeyword2,user.MainKeyword3,user.MainKeyword4];
+                  var sendarray = [];
+
+
+                  const query = `INSERT INTO main_goal(main, user_email) values ('${bucket}','${user_email}');`;
+                  maria.query(query,function(err,rows,fields){
+                  if(!err){
+                      console.log("main goal 저장 완료")
+                      main_id = rows.insertId;
+                      sendarray.push({main:bucket,main_id:main_id});
+                      for(i=0;i < bucketarray.length;i++){
+                        const query = `INSERT INTO big_goal(user_email, main_id, small_goal, mini1, mini2, mini3, mini4) 
+                        values ('${user_email}','${main_id}','${bucketarray[i].Value}','${bucketarray[i].Detail1}','${bucketarray[i].Detail2}','${bucketarray[i].Detail3}','${bucketarray[i].Detail4}');`;
+                        sendarray.push({small_goal:bucketarray[i].Value,mini:[bucketarray[i].Detail1,bucketarray[i].Detail2,bucketarray[i].Detail3,bucketarray[i].Detail4]})
+                        maria.query(query,function(err,rows,fields){
+                        if(err){
+                            console.log("big_goal 에러")
+                            res.status(400);
+                            return;
+                        }
+                        });
+                      };
+                      res.status(200).send(sendarray);
+                  }
+                  else{
+                      res.status(400).send(err);
+                      console.log("err : " + err);
+                  }
+                  });
                 } 
                 else {
                   res.status(500).json({ error: "fail......" });
