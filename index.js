@@ -107,7 +107,7 @@ app.get("/api/auth/kakao", async (req, res) => {
         //req.session.userId = rows.id;
         //req.session.save(() => { });
         res.redirect(
-          `${process.env.CLIENT_URL}/home?` +
+          `http://ggumtle-frontend.s3-website.ap-northeast-2.amazonaws.com/home?` +
             (data.properties && data.properties.nickname
               ? "user_name=" + encodeURIComponent(data.properties.nickname)
               : "") +
@@ -119,7 +119,7 @@ app.get("/api/auth/kakao", async (req, res) => {
       } else {
         console.log("회원가입이 되어있지 않은 사용자 입니다!");
         res.redirect(
-          `${process.env.CLIENT_URL}/userinfo?` +
+          `http://ggumtle-frontend.s3-website.ap-northeast-2.amazonaws.com/userinfo?` +
             (data.properties && data.properties.nickname
               ? "&user_name=" + encodeURIComponent(data.properties.nickname)
               : "") +
