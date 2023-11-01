@@ -107,7 +107,7 @@ app.get("/api/auth/kakao", async (req, res) => {
         //req.session.userId = rows.id;
         //req.session.save(() => { });
         res.redirect(
-          "http://localhost:3000/home?" +
+          `${process.env.CLIENT_URL}/home?` +
             (data.properties && data.properties.nickname
               ? "user_name=" + encodeURIComponent(data.properties.nickname)
               : "") +
@@ -119,7 +119,7 @@ app.get("/api/auth/kakao", async (req, res) => {
       } else {
         console.log("회원가입이 되어있지 않은 사용자 입니다!");
         res.redirect(
-          "http://localhost:3000/userinfo?" +
+          `${process.env.CLIENT_URL}/userinfo?` +
             (data.properties && data.properties.nickname
               ? "&user_name=" + encodeURIComponent(data.properties.nickname)
               : "") +
