@@ -126,7 +126,7 @@ app.get("/api/auth/kakao", async (req, res) => {
             (data.kakao_account && data.kakao_account.email
               ? "&user_email=" + data.kakao_account.email
               : "") +
-            (data.id ? "$kakao_id=" + data.id : "")
+            (data.id ? "&kakao_id=" + data.id : "")
         );
       }
     });
